@@ -53,10 +53,13 @@ int main (int argc, char **argv)
      *  if we dont if the files empty eof will be unchecked
      */
     *f1 = fgetc(fptr1);
-    *f2 = fgetc(fptr1);
+    *f2 = fgetc(fptr2);
     while ( !feof(fptr1) && !feof(fptr2) ) {
-        fprintf(stdout, "%c \n", *f1);
+        if ( *f1 != *f2 ) {
+            fprintf(stdout, "file1: %X, file2: %X \n", *f1, *f2);
+        }
         *f1 = fgetc(fptr1);
+        *f2 = fgetc(fptr2);
     }
 
     return 0;
