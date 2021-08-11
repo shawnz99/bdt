@@ -26,12 +26,21 @@ int main (int argc, char **argv)
         exit(1);
     }
 
+    // file pointers
+    FILE *fptr1     = NULL;
+    FILE *fptr2     = NULL;
+    // file bytes
+//    int *f1         = NULL;
+//    int *f2         = NULL;
+
+    char bytearr1[BYTEPL];
+    char bytearr2[BYTEPL];
+
+    int byteOffset = 0;
 
     /*
      *  If the number of args is correct then get some file ptrs
      */
-    FILE *fptr1     = NULL;
-    FILE *fptr2     = NULL;
 
     fptr1 = fopen(*(argv + 1), "r");
     fptr2 = fopen(*(argv + 2), "r");
@@ -40,26 +49,26 @@ int main (int argc, char **argv)
     /*
      *  Getting some stuff to read the bytes into
      */
-    int *f1         = NULL;
-    int *f2         = NULL;
 
-
-    f1 = (int*) malloc(sizeof(char));
-    f2 = (int*) malloc(sizeof(char));
+    //f1 = (int*) malloc(sizeof(char));
+    //f2 = (int*) malloc(sizeof(char));
     
 
     /*
      *  Snagging the first byte first because
      *  if we dont if the files empty eof will be unchecked
      */
-    *f1 = fgetc(fptr1);
-    *f2 = fgetc(fptr2);
+    bytearr1[byteOffset] = fgetc(fptr1);
+    bytearr2[byteOffset] = fgetc(fptr2);
+    byteOffset++;
+
     while ( !feof(fptr1) && !feof(fptr2) ) {
-        if ( *f1 != *f2 ) {
-            fprintf(stdout, "file1: %X, file2: %X \n", *f1, *f2);
-        }
-        *f1 = fgetc(fptr1);
-        *f2 = fgetc(fptr2);
+        bytearr1[byteOffset] = fgetc(fptr1);
+        bytearr2[byteOffset] = fgetc(fptr2);
+        
+        fprintf(stderr, "file1: %X, file2: %X\n", bytearr1[byteOffset],bytearr2[byteOffset]);
+
+        byteOffset++;
     }
 
     return 0;
