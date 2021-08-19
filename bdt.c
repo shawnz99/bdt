@@ -9,7 +9,7 @@
 //  - Display the address/offset on the left just as xxd does
 //
 /////
-
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -18,13 +18,16 @@
 #define BYTEPL 16
 
 
-#define ANSI_RESET  "/x1b[0m"
-#define ANSI_FG_RED "/x1b[31m"
+#define ANSI_RESET  "\x1b[0m"
+#define ANSI_FG_RED "\x1b[31m"
+#define ANSI_FG_GREEN "\x1b[32m"
+#define ANSI_FG_WHITE "\x1b[37m"
+#define ANSI_BOLD "\x1b[1m"
 
-bool arrcomp(char a[], char b[]);
-void printBytes(char a[], char b[], int offset);
+void printBytes(char a[], char b[], int offset, char f1[], char f2[]);
+bool arrcomp(char a[], char b[]); 
 
-int main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
     /*
      *  Checking number of arguments
@@ -46,10 +49,10 @@ int main (int argc, char **argv)
      */ 
     char bytearr1[BYTEPL + 1];
     char bytearr2[BYTEPL + 1];
+    char f1[50]; strcpy (f1, *(argv + 1));
+    char f2[50]; strcpy (f2, *(argv + 2));
 
     int byteOffset = 0;
-    int diffByte   = 0;
-
     /*
      *  If the number of args is correct then get some file ptrs
      */
@@ -72,32 +75,33 @@ int main (int argc, char **argv)
         bytearr1[byteOffset] = fgetc(fptr1);
         bytearr2[byteOffset] = fgetc(fptr2);
 
-        byteOffset++;
+        if ( !feof(fptr1) && !feof(fptr2) ) {
+
+            byteOffset++;
+        }
 
     }
     if ( byteOffset == BYTEPL && arrcomp(bytearr1, bytearr2) == true ) {
         fprintf(stdout, "hello? \n");
     }
     else if ( arrcomp(bytearr1, bytearr2) == false ) {
-        printBytes(bytearr1, bytearr2, byteOffset);
+        printBytes(bytearr1, bytearr2, byteOffset - BYTEPL, f1, f2);
         exit(1);
     }
 
     return 0;
 }
 
-
 /*
  *  function to go through each element of the arrays
  *  and compare them if theyre differnt return false
  */
-
-// TODO: have it put the actual byte where the difference is 
 bool arrcomp(char a[], char b[]) {
     
     for (int i = 0; i < BYTEPL; i++ ) {
-        if ( a[i] != b[i] )
+        if ( a[i] != b[i] ) {
             return false;
+        }
     }
 
     return true;
@@ -107,22 +111,72 @@ bool arrcomp(char a[], char b[]) {
 /*
  *  Function to print the 16 byte chunk where the error resides
  */
-void printBytes(char a[], char b[], int offset) {
+void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
     
-    fprintf(stdout, "%08x:  ", offset);
+    /* 
+     *  For First file
+     */
+    fprintf(stdout, "[");
+    fprintf(stdout, ANSI_FG_GREEN);
+    fprintf(stdout, "%s", f1);
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, "]");
+    fprintf(stdout, ANSI_FG_GREEN);
+    fprintf(stdout, " < ");
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, ANSI_FG_WHITE);
+    fprintf(stdout, ANSI_BOLD);
+    fprintf(stdout, "%08x", offset);
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, ": ");
+
     for ( int i = 0; i < BYTEPL; i++ ) {
-        fprintf(stdout, "%02x", a[i]);
-        if ( i % 2 == 1 ) {
-            fprintf(stdout, " ");
+        if ( a[i] != b[i]  ) {
+            fprintf(stdout, ANSI_FG_GREEN);
+            fprintf(stdout, "%02x", a[i]);
+            fprintf(stdout, ANSI_RESET);
         }
-    }
-    fprintf(stdout, "| ");
-    for ( int i = 0; i < BYTEPL; i++ ) {
-        fprintf(stdout, "%02x", b[i]);
+        else {
+            fprintf(stdout, "%02x", a[i]);
+        }
+
         if ( i % 2 == 1 ) {
             fprintf(stdout, " ");
         }
     }
     fprintf(stdout, "\n");
-    
+
+    /* 
+     *  For second file
+     */
+    fprintf(stdout, "[");
+    fprintf(stdout, ANSI_FG_RED);
+    fprintf(stdout, "%s", f1);
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, "]");
+    fprintf(stdout, ANSI_FG_RED);
+    fprintf(stdout, " > ");
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, ANSI_FG_WHITE);
+    fprintf(stdout, ANSI_BOLD);
+    fprintf(stdout, "%08x", offset);
+    fprintf(stdout, ANSI_RESET);
+    fprintf(stdout, ": ");
+
+    for ( int i = 0; i < BYTEPL; i++ ) {
+        if ( a[i] != b[i]  ) {
+            fprintf(stdout, ANSI_FG_RED);
+            fprintf(stdout, "%02x", b[i]);
+            fprintf(stdout, ANSI_RESET);
+        }
+        else {
+            fprintf(stdout, "%02x", b[i]);
+        }
+
+        if ( i % 2 == 1 ) {
+            fprintf(stdout, " ");
+        }
+    }
+    fprintf(stdout, "\n");
+
 }
