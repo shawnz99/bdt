@@ -53,6 +53,7 @@ int main (int argc, char *argv[])
     char f2[50]; strcpy (f2, *(argv + 2));
 
     int byteOffset = 0;
+    int arrElement = 0;
     /*
      *  If the number of args is correct then get some file ptrs
      */
@@ -63,21 +64,27 @@ int main (int argc, char *argv[])
      *  Snagging the first byte first because
      *  if we dont if the files empty eof will be unchecked
      */
-    bytearr1[byteOffset] = fgetc(fptr1);
-    bytearr2[byteOffset] = fgetc(fptr2);
+    bytearr1[arrElement] = fgetc(fptr1);
+    bytearr2[arrElement] = fgetc(fptr2);
 
+    arrElement++;
     byteOffset++;
 
 
     // TODO: Make it grab more bytes after the fist 16
     while ( !feof(fptr1) && !feof(fptr2) ) {
 
-        bytearr1[byteOffset] = fgetc(fptr1);
-        bytearr2[byteOffset] = fgetc(fptr2);
+        bytearr1[arrElement] = fgetc(fptr1);
+        bytearr2[arrElement] = fgetc(fptr2);
 
         if ( !feof(fptr1) && !feof(fptr2) ) {
 
             byteOffset++;
+            arrElement++;
+        }
+
+        if ( arrElement == BYTEPL + 1 ) {
+           arrElement = 0; 
         }
 
     }
