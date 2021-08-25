@@ -82,12 +82,12 @@ int main (int argc, char *argv[])
             byteOffset++;
             arrElement++;
         }
-
-        if ( arrElement == BYTEPL + 1 ) {
+        if ( arrElement == BYTEPL ) {
            arrElement = 0; 
         }
 
     }
+
     if ( byteOffset == BYTEPL && arrcomp(bytearr1, bytearr2) == true ) {
         fprintf(stdout, "hello? \n");
     }
@@ -150,6 +150,10 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
         if ( i % 2 == 1 ) {
             fprintf(stdout, " ");
         }
+        if ( i == offset % BYTEPL - 1) {
+            fprintf(stdout, "\n");
+            i = BYTEPL;
+        }
     }
     fprintf(stdout, "\n");
 
@@ -182,6 +186,11 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
 
         if ( i % 2 == 1 ) {
             fprintf(stdout, " ");
+        }
+
+        if ( i == offset % BYTEPL - 1) {
+            fprintf(stdout, "\n");
+            i = BYTEPL;
         }
     }
     fprintf(stdout, "\n");
