@@ -24,7 +24,7 @@
 #define ANSI_FG_WHITE "\x1b[37m"
 #define ANSI_BOLD "\x1b[1m"
 
-void printBytes(char a[], char b[], int offset, char f1[], char f2[]);
+void printBytes(char a[], char b[], int offset, char f1[], char f2[], int arrElement);
 bool arrcomp(char a[], char b[]); 
 
 int main (int argc, char *argv[])
@@ -82,6 +82,10 @@ int main (int argc, char *argv[])
             byteOffset++;
             arrElement++;
         }
+
+        if ( arrElement == BYTEPL && arrcomp(bytearr1, bytearr2) == false ) {
+            break;
+        }
         if ( arrElement == BYTEPL ) {
            arrElement = 0; 
         }
@@ -92,7 +96,7 @@ int main (int argc, char *argv[])
         fprintf(stdout, "hello? \n");
     }
     else if ( arrcomp(bytearr1, bytearr2) == false ) {
-        printBytes(bytearr1, bytearr2, byteOffset - BYTEPL, f1, f2);
+        printBytes(bytearr1, bytearr2, byteOffset - BYTEPL, f1, f2, arrElement);
         exit(1);
     }
 
@@ -118,7 +122,7 @@ bool arrcomp(char a[], char b[]) {
 /*
  *  Function to print the 16 byte chunk where the error resides
  */
-void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
+void printBytes(char a[], char b[], int offset, char f1[], char f2[], int arrElement) {
     
     /* 
      *  For First file
@@ -143,16 +147,16 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
             fprintf(stdout, "%02x", a[i]);
             fprintf(stdout, ANSI_RESET);
         }
+        else if ( a[i] == 0x0a || a[i] == 0xff ) {
+            fprintf(stdout, "\n");
+            break;
+        }
         else {
             fprintf(stdout, "%02x", a[i]);
         }
 
         if ( i % 2 == 1 ) {
             fprintf(stdout, " ");
-        }
-        if ( i == offset % BYTEPL - 1) {
-            fprintf(stdout, "\n");
-            i = BYTEPL;
         }
     }
     fprintf(stdout, "\n");
@@ -180,17 +184,16 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[]) {
             fprintf(stdout, "%02x", b[i]);
             fprintf(stdout, ANSI_RESET);
         }
+        else if ( b[i] == 0x0a || a[i] == 0xff ) {
+            fprintf(stdout, "\n");
+            break;
+        }
         else {
             fprintf(stdout, "%02x", b[i]);
         }
 
         if ( i % 2 == 1 ) {
             fprintf(stdout, " ");
-        }
-
-        if ( i == offset % BYTEPL - 1) {
-            fprintf(stdout, "\n");
-            i = BYTEPL;
         }
     }
     fprintf(stdout, "\n");
