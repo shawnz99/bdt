@@ -60,6 +60,15 @@ int main (int argc, char *argv[])
     fptr1 = fopen(*(argv + 1), "r");
     fptr2 = fopen(*(argv + 2), "r");
 
+
+    if ( fptr1 == NULL ) {
+        fprintf(stderr, "Error: %s does not exist \n", *(argv + 1) );
+        exit(2);
+    }
+    if ( fptr2 == NULL ) {
+        fprintf(stderr, "Error: %s does not exist \n", *(argv + 2) );
+        exit(1);
+    }
     /*
      *  Snagging the first byte first because
      *  if we dont if the files empty eof will be unchecked
@@ -159,6 +168,23 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[], int arrEle
             fprintf(stdout, " ");
         }
     }
+
+    fprintf(stdout, "  ");
+
+    for ( int i = 0; i < BYTEPL; i++ ) {
+        if ( a[i] != b[i]  ) {
+            fprintf(stdout, ANSI_FG_GREEN);
+            fprintf(stdout, "%c", a[i]);
+            fprintf(stdout, ANSI_RESET);
+        }
+        else if ( a[i] == 0x0a || a[i] == 0xff ) {
+            fprintf(stdout, "\n");
+            break;
+        }
+        else {
+            fprintf(stdout, "%c", a[i]);
+        }
+    }
     fprintf(stdout, "\n");
 
     /* 
@@ -196,6 +222,29 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[], int arrEle
             fprintf(stdout, " ");
         }
     }
-    fprintf(stdout, "\n");
 
+    fprintf(stdout, "  ");
+
+    for ( int i = 0; i < BYTEPL; i++ ) {
+        if ( a[i] != b[i]  ) {
+            fprintf(stdout, ANSI_FG_RED);
+            fprintf(stdout, "%c", b[i]);
+            fprintf(stdout, ANSI_RESET);
+        }
+        else if ( a[i] == 0x0a || a[i] == 0xff ) {
+            fprintf(stdout, "\n");
+            break;
+        }
+        else {
+            fprintf(stdout, "%c", a[i]);
+        }
+    }
+    
+    fprintf(stdout, "\n");
 }
+
+
+
+
+
+
