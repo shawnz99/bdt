@@ -171,6 +171,9 @@ void printBytes(char a[], char b[], int offset, char f1[], char f2[], int arrEle
 
     fprintf(stdout, "  ");
 
+    // TODO: print chars based on their ascii value so if a tab comes it prints /t or
+    // something
+
     for ( int i = 0; i < BYTEPL; i++ ) {
         if ( a[i] != b[i]  ) {
             fprintf(stdout, ANSI_FG_GREEN);
