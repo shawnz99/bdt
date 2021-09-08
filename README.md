@@ -9,6 +9,8 @@ with some features that diff may or may not have such as:
 
 ## Usage/Installation
 
+# Installation
+
 TODO:
   - Make the offset the offset byte not the offset line
   - Have it show more information
